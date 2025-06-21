@@ -1,77 +1,71 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
-  StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
+  StyleSheet,
   Alert,
+  TouchableOpacity,
 } from "react-native";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "@firebase/config";
 import { useRouter } from "expo-router";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase/config";
+// Ajuste o caminho conforme necessário
 
-type RegistroMonitoramento = {
-  id?: string;
+
+interface Monitoramento {
+  id: string;
   data: string;
   granja: string;
   "Media Peso": string;
   Mortos: number;
-  "Observação": string;
-};
+  Observação: string;
+}
 
-export default function MonitoramentoScreen() {
-  const [registros, setRegistros] = useState<RegistroMonitoramento[]>([]);
+export default function Monitoramento() {
+  const [dados, setDados] = useState<Monitoramento[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const buscarRegistros = async () => {
+  const buscarDados = async () => {
     try {
       const snapshot = await getDocs(collection(db, "monitoramento"));
-      const dados: RegistroMonitoramento[] = snapshot.docs.map((docItem) => ({
-        id: docItem.id,
-        ...docItem.data(),
-      })) as RegistroMonitoramento[];
-
-      setRegistros(dados);
+      const lista: Monitoramento[] = snapshot.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<Monitoramento, "id">),
+      }));
+      setDados(lista);
     } catch (error) {
-      Alert.alert("Erro", "Erro ao buscar registros.");
+      Alert.alert("Erro", "Erro ao buscar dados de monitoramento.");
     } finally {
       setLoading(false);
     }
   };
 
-  const deletarRegistro = async (id?: string) => {
-    if (!id) return;
+  const deletarRegistro = async (id: string) => {
     try {
       await deleteDoc(doc(db, "monitoramento", id));
-      setRegistros((prev) => prev.filter((r) => r.id !== id));
-      Alert.alert("Sucesso", "Registro deletado com sucesso.");
+      setDados((prev) => prev.filter((item) => item.id !== id));
+      Alert.alert("Sucesso", "Registro excluído.");
     } catch (error) {
-      Alert.alert("Erro", "Erro ao deletar registro.");
+      Alert.alert("Erro", "Erro ao excluir registro.");
     }
   };
 
-  const deletarRegistroComConfirmacao = (id?: string) => {
-    if (!id) return;
-
+  const confirmarExclusao = (id: string) => {
     Alert.alert(
       "Confirmação",
-      "Tem certeza que deseja excluir este registro?",
+      "Tem certeza que deseja excluir este monitoramento?",
       [
         { text: "Cancelar", style: "cancel" },
-        {
-          text: "Sim",
-          style: "destructive",
-          onPress: () => deletarRegistro(id),
-        },
+        { text: "Excluir", style: "destructive", onPress: () => deletarRegistro(id) },
       ]
     );
   };
 
   useEffect(() => {
-    buscarRegistros();
+    buscarDados();
   }, []);
 
   return (
@@ -80,27 +74,27 @@ export default function MonitoramentoScreen() {
         style={styles.addButton}
         onPress={() => router.push("/monitoramento/novo")}
       >
-        <Text style={styles.addButtonText}>+ Novo Monitoramento</Text>
+        <Text style={styles.addButtonText}>+ Adicionar Monitoramento</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>Monitoramento de Produção</Text>
+      <Text style={styles.title}>Monitoramento</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#007bff" />
       ) : (
         <FlatList
-          data={registros}
-          keyExtractor={(item) => item.id!}
+          data={dados}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
-              onLongPress={() => deletarRegistroComConfirmacao(item.id)}
+              onLongPress={() => confirmarExclusao(item.id)}
             >
-              <Text style={styles.cardTitle}>{item.granja}</Text>
-              <Text>Data: {item.data}</Text>
-              <Text>Mortos: {item.Mortos}</Text>
-              <Text>Média Peso: {item["Media Peso"]}</Text>
-              <Text>Observação: {item["Observação"]}</Text>
+              <Text style={styles.cardTitle}>Granja: {item.granja}</Text>
+              <Text style={styles.cardText}>Data: {item.data}</Text>
+              <Text style={styles.cardText}>Peso: {item["Media Peso"]}</Text>
+              <Text style={styles.cardText}>Mortos: {item.Mortos}</Text>
+              <Text style={styles.cardText}>Obs: {item.Observação}</Text>
             </TouchableOpacity>
           )}
         />
@@ -114,8 +108,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 15, textAlign: "center" },
   card: { backgroundColor: "#f9f9f9", padding: 15, borderRadius: 8, marginBottom: 10 },
   cardTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 5 },
+  cardText: { color: "#555" },
   addButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#28a745",
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-import { useEffect } from "react";
   View,
   Text,
   TextInput,
@@ -10,7 +9,7 @@ import { useEffect } from "react";
   ScrollView,
 } from "react-native";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "@firebase/config";
+import { db } from "../../firebase/config";
 import { useRouter } from "expo-router";
 
 export default function NovoMonitoramento() {
@@ -21,9 +20,6 @@ export default function NovoMonitoramento() {
   const [observacao, setObservacao] = useState("");
 
   const router = useRouter();
-
-useEffect(() => {
-
 
   const salvar = async () => {
     if (!granja || !mediaPeso || !mortos || !data) {
@@ -41,7 +37,7 @@ useEffect(() => {
       });
 
       Alert.alert("Sucesso", "Registro salvo com sucesso!");
-        router.replace("/monitoramento");
+      router.replace("/monitoramento");
     } catch (error) {
       Alert.alert("Erro", "Erro ao salvar registro.");
     }
@@ -127,5 +123,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-}, []);

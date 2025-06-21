@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-import { useEffect } from "react";
   View,
   Text,
   TextInput,
@@ -19,9 +18,6 @@ export default function Register() {
   const [senha, setSenha] = useState("");
   const router = useRouter();
 
-useEffect(() => {
-
-
   const handleRegister = async () => {
     if (!nome || !email || !senha) {
       Alert.alert("Erro", "Preencha todos os campos.");
@@ -32,40 +28,48 @@ useEffect(() => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
 
-      await setDoc(doc(db, "usuarios", user.uid), {
-        nome,
-        email,
-      });
+      await setDoc(doc(db, "usuarios", user.uid), { nome, email });
 
       Alert.alert("Sucesso", "Conta criada com sucesso!");
-        router.replace("/dashboard");
+      router.replace("/dashboard" as any);
     } catch (error: any) {
       Alert.alert("Erro", "Erro ao registrar. Verifique os dados.");
     }
   };
 
   return (
-    <View style={styles.background}>
-      <View style={styles.overlay}>
-        <Text style={styles.title}>Criar Conta</Text>
-        <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
-        <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} />
-        <TextInput style={styles.input} placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
-          <Text style={styles.buttonText}>Registrar</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.container}>
+      <Text style={styles.title}>Criar Conta</Text>
+      <TextInput
+        placeholder="Nome"
+        value={nome}
+        onChangeText={setNome}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Senha"
+        value={senha}
+        onChangeText={setSenha}
+        style={styles.input}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Registrar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1, justifyContent: "center", backgroundColor: "#fff" },
-  overlay: { flex: 1, justifyContent: "center", padding: 24 },
-  title: { fontSize: 28, fontWeight: "bold", color: "#003366", textAlign: "center", marginBottom: 24 },
-  input: { backgroundColor: "#f2f2f2", borderRadius: 8, padding: 12, marginBottom: 16 },
-  button: { backgroundColor: "#003366", padding: 16, borderRadius: 8, alignItems: "center" },
-  buttonText: { color: "#fff", fontWeight: "bold" },
+  container: { flex: 1, justifyContent: "center", padding: 16 },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
+  input: { borderWidth: 1, padding: 8, marginBottom: 12, borderRadius: 4 },
+  button: { backgroundColor: "#003366", padding: 12, borderRadius: 4 },
+  buttonText: { color: "#fff", textAlign: "center" },
 });
-
-}, []);

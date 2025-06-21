@@ -1,24 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-import { useEffect } from "react";
   View,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from "react-native";
+import { useRouter } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@firebase/config";
-import { useRouter } from "expo-router";
 
 export default function NovoDocumento() {
   const [nome, setNome] = useState("");
   const [vencimento, setVencimento] = useState("");
   const router = useRouter();
-
-useEffect(() => {
-
 
   const salvarDocumento = async () => {
     if (!nome || !vencimento) {
@@ -32,14 +29,14 @@ useEffect(() => {
         dataVencimento: vencimento,
       });
       Alert.alert("Sucesso", "Documento cadastrado com sucesso");
-        router.replace("/documentos");
+      router.replace("/documentos" as any);
     } catch (error) {
       Alert.alert("Erro", "Erro ao cadastrar documento");
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Cadastrar Novo Documento</Text>
 
       <TextInput
@@ -59,12 +56,12 @@ useEffect(() => {
       <TouchableOpacity style={styles.button} onPress={salvarDocumento}>
         <Text style={styles.buttonText}>Salvar</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: "#fff", flex: 1 },
+  container: { padding: 20, backgroundColor: "#fff", flexGrow: 1 },
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
   input: {
     borderWidth: 1,
@@ -82,5 +79,3 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
 });
-
-}, []);

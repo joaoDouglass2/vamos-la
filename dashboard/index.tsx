@@ -1,30 +1,25 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
 
-useEffect(() => {
-
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>BirdTrack</Text>
-      <Text style={styles.subtitle}>Painel de Controle</Text>
+      <Text style={styles.title}>Dashboard</Text>
 
       <TouchableOpacity
-        style={styles.card}
-        onPress={() =>   router.push("/documentos")}
+        style={styles.button}
+        onPress={() => router.push("/documentos")}
       >
-        <Text style={styles.cardText}>📄 Documentos</Text>
+        <Text style={styles.buttonText}>Ir para Documentos</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.card}
-        onPress={() =>   router.push("/monitoramento")}
+        style={styles.button}
+        onPress={() => router.push("/monitoramento")}
       >
-        <Text style={styles.cardText}>📊 Monitoramento</Text>
+        <Text style={styles.buttonText}>Ir para Monitoramento</Text>
       </TouchableOpacity>
     </View>
   );
@@ -34,39 +29,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f8fafd",
-    padding: 24,
     justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#003366",
-    textAlign: "center",
-    marginBottom: 8,
+    marginBottom: 24,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 32,
-  },
-  card: {
-    backgroundColor: "#fff",
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    marginBottom: 20,
+  button: {
+    backgroundColor: "#003366",
+    padding: 16,
+    borderRadius: 8,
     alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    marginVertical: 8,
+    width: "100%",
   },
-  cardText: {
-    fontSize: 18,
-    color: "#003366",
-    fontWeight: "600",
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
-
-}, []);
